@@ -28,6 +28,12 @@ def main():
                 catch = False
             except:
                 j += 1
+                if j == 10:
+                    print("NO TIME")
+                    break
+        if j == 10:
+            continue
+
         try:
             files[f'{release.year}-{release.month}'].closed
         except:
