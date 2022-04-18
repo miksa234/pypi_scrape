@@ -13,7 +13,7 @@ def main():
     path = './data/'
     files = {}
 
-    for i, package in enumerate(packages):
+    for i, package in enumerate(packages[:100]):
         try:
             json = requests.get(url.format(package)).json()
         except:
