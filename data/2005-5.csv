@@ -1,0 +1,7 @@
+package|requirement
+ll-xist|cssutils
+ll-xist|lxml
+ll-xist|cx-Oracle
+ll-xist|setproctitle
+ll-xist|requests
+jonpy|
