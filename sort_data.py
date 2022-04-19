@@ -42,5 +42,6 @@ def main():
         dframes[fname] = dframes[fname].drop_duplicates()
         dframes[fname].to_csv('./data_sorted/' + fname, sep='|', index=False)
 
+
 if __name__ == '__main__':
     main()
