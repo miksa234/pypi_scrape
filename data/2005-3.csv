@@ -1,8 +1,0 @@
-package|requirement
-ZConfig|sphinxcontrib-programoutput
-ZConfig|docutils
-ZConfig|manuel
-ZConfig|zope.exceptions
-ZConfig|zope.testrunner
-rlcompleter2|
-pygenx|

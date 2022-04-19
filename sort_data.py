@@ -14,38 +14,36 @@ def main():
     dframes = {}
 
     for fname in file_names:
-       dframes[fname] = pd.read_csv(path + fname, sep='|', keep_default_na=False)
-    cache_list = [['package', 'requirement']]
+       dframes[fname] = np.genfromtxt(path + fname, delimiter='|', dtype='str')[1:]
+
+    cache_array = np.array([['package', 'requirement']], dtype='str')
 
     for i, fname in enumerate(file_names):
 
-        print(fname, f'{round(i/len(file_names)*100, 1)}%    {len(cache_list)}', sep='\t')
+        print(fname, f'{round(i/len(file_names)*100, 1)}%    {len(cache_array)}', sep='\t')
 
         if i == 0:
-            all_before_pd = dframes[fname]
+            all_before_data = dframes[fname]
         else:
-            all_before_pd = pd.concat([dframes[_] for _ in file_names[:i]])
+            all_before_data = np.vstack([dframes[_] for _ in file_names[:i]])
 
-        for j, (package, requirement) in enumerate(dframes[fname].to_numpy()):
+        for j, (package, requirement) in enumerate(dframes[fname]):
             if requirement != '':
-                if requirement not in all_before_pd['package'].to_list():
-                    cache_list.append([package, requirement])
-                    dframes[fname]['requirement'].iloc[j] = ''
+                if requirement not in all_before_data[:,0]:
+                    cache_array = np.vstack([cache_array, [package, requirement]])
+                    dframes[fname][:,1][j] = ''
 
-            index_found = np.where(np.array(cache_list, dtype='object')[:,1] == package)[0]
+            index_found = np.where(cache_array[:,1] == package)[0]
             if index_found.size != 0:
                 for i_found in index_found:
-                    found_package, found_requirement = cache_list[i_found]
-                    dframes[fname].append({'package': found_package, 'requirement': found_requirement},\
-                                      ignore_index=True)
-                cache_list = list(np.delete(cache_list, index_found, axis=0))
-        if fname == '2009-8.csv':
-            print(*cache_list, sep='\n')
-            break
+                    found_package, found_requirement = cache_array[i_found]
+                    dframes[fname] = np.vstack([dframes[fname], [found_package, found_requirement]])
+                cache_array = np.delete(cache_array, index_found, axis=0)
 
 
-        dframes[fname] = dframes[fname].drop_duplicates()
-        dframes[fname].to_csv('./data_sorted/' + fname, sep='|', index=False)
+        dframes[fname] = np.unique(dframes[fname], axis=0)
+        pd.DataFrame(dframes[fname], columns=['package', 'requirement']).to_csv('./data_sorted/' + fname, sep='|', index=False)
+
 
 
 if __name__ == '__main__':

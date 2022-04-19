@@ -1,9 +1,9 @@
 package|requirement
-typecheck|
-OpenPGP|
-WebStack|
-pyipc|
-buildutils|
-PyPedal|
 LSystem2|
+OpenPGP|
+PyPedal|
+WebStack|
+buildutils|
 fcgiapp|
+pyipc|
+typecheck|
