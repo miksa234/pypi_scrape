@@ -18,7 +18,7 @@ def main():
        dframes[fname] = pd.read_csv(path + fname, sep='|', keep_default_na=False)
     cache_list = [['package', 'requirement']]
 
-    for i, fname in enumerate(file_names):
+    for i, fname in enumerate(file_names[:10]):
 
         print(fname, f'{round(i/len(file_names)*100, 1)}%', sep='\t')
 
@@ -33,11 +33,13 @@ def main():
                     cache_list.append([package, requirement])
                     dframes[fname]['requirement'].iloc[j] = ''
 
-            if package in list(zip(*cache_list))[1]:
-                found_package, found_requirement = cache_list[list(zip(*cache_list))[1].index(package)]
-                dframes[fname].append({'package': found_package, 'requirement': found_requirement},\
+            if (index_found := np.where(np.array(cache_list, dtype='object')[:,1] == package)[0]).size != 0:
+                for i_found in index_found:
+                    found_package, found_requirement = cache_list[i_found]
+                    dframes[fname].append({'package': found_package, 'requirement': found_requirement},\
                                       ignore_index=True)
-                del cache_list[list(zip(*cache_list))[1].index(package)]
+                    del cache_list[i_found]
+
 
         dframes[fname] = dframes[fname].drop_duplicates()
         dframes[fname].to_csv('./data_sorted/' + fname, sep='|', index=False)
