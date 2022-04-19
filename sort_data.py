@@ -9,7 +9,6 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def main():
-
     path = './data/'
     file_names =  sorted(os.listdir(path), key=lambda x: datetime.strptime(x, '%Y-%m.csv'))
     dframes = {}
@@ -18,9 +17,9 @@ def main():
        dframes[fname] = pd.read_csv(path + fname, sep='|', keep_default_na=False)
     cache_list = [['package', 'requirement']]
 
-    for i, fname in enumerate(file_names[:10]):
+    for i, fname in enumerate(file_names):
 
-        print(fname, f'{round(i/len(file_names)*100, 1)}%', sep='\t')
+        print(fname, f'{round(i/len(file_names)*100, 1)}%    {len(cache_list)}', sep='\t')
 
         if i == 0:
             all_before_pd = dframes[fname]
@@ -33,12 +32,16 @@ def main():
                     cache_list.append([package, requirement])
                     dframes[fname]['requirement'].iloc[j] = ''
 
-            if (index_found := np.where(np.array(cache_list, dtype='object')[:,1] == package)[0]).size != 0:
+            index_found = np.where(np.array(cache_list, dtype='object')[:,1] == package)[0]
+            if index_found.size != 0:
                 for i_found in index_found:
                     found_package, found_requirement = cache_list[i_found]
                     dframes[fname].append({'package': found_package, 'requirement': found_requirement},\
                                       ignore_index=True)
-                    del cache_list[i_found]
+                cache_list = list(np.delete(cache_list, index_found, axis=0))
+        if fname == '2009-8.csv':
+            print(*cache_list, sep='\n')
+            break
 
 
         dframes[fname] = dframes[fname].drop_duplicates()
